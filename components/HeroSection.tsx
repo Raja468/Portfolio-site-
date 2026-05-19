@@ -148,7 +148,7 @@ export default function HeroSection() {
             </span>
             <br />
             <span className="text-white/80 text-2xl sm:text-3xl md:text-4xl lg:text-5xl block mt-3">
-              Full Stack Developer & AI Automation Engineer
+              Full Stack Developer & AI Engineer
             </span>
           </h1>
         </motion.div>
