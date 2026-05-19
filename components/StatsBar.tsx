@@ -3,27 +3,28 @@
 import { motion } from 'framer-motion'
 
 const technologies = [
-  'React', 'Next.js', 'Node.js', 'MongoDB', 'Python', 'Flask',
-  'Tailwind', 'Git', 'AI Automation', 'WordPress',
+  'React', 'Next.js', 'TypeScript', 'Node.js', 'Tailwind CSS',
+  'Framer Motion', 'PostgreSQL', 'Docker', 'Git', 'Figma',
+  'REST APIs', 'CI/CD', 'Python', 'Prisma', 'Stripe',
 ]
 
-const scrollItems = [...technologies, ...technologies, ...technologies, ...technologies, ...technologies, ...technologies]
+const scrollItems = [...technologies, ...technologies, ...technologies, ...technologies]
 
 export default function StatsBar() {
   return (
-    <section className="bg-surface border-y border-border py-10 relative z-10 overflow-hidden">
+    <section className="bg-surface border-y border-border py-8 relative z-10 overflow-hidden">
       <div className="flex whitespace-nowrap">
         <motion.div
-          className="flex gap-16 md:gap-32 items-center"
-          animate={{ x: [0, -2000] }}
-          transition={{ duration: 40, repeat: Infinity, ease: 'linear' }}
+          className="flex gap-12 md:gap-20 items-center"
+          animate={{ x: [0, -2500] }}
+          transition={{ duration: 50, repeat: Infinity, ease: 'linear' }}
         >
           {scrollItems.map((tech, idx) => (
             <div key={idx} className="flex items-center gap-6 md:gap-10">
-              <span className="text-xl md:text-3xl font-bold font-display text-white/30 hover:text-purple-primary transition-colors cursor-default uppercase tracking-widest">
+              <span className="text-lg md:text-2xl font-bold font-display text-white/20 hover:text-purple-primary/60 transition-colors cursor-default uppercase tracking-widest select-none">
                 {tech}
               </span>
-              <div className="w-2 h-2 bg-purple-primary/40 rounded-full" />
+              <div className="w-1.5 h-1.5 bg-purple-primary/30 rounded-full shrink-0" />
             </div>
           ))}
         </motion.div>

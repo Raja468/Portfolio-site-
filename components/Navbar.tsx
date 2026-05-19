@@ -1,32 +1,39 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Zap, Menu, X } from 'lucide-react'
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-
-const navLinks = [
-  { name: 'Home', href: '/', isHash: false },
-  { name: 'Services', href: '#services', isHash: true },
-  { name: 'Work', href: '#work', isHash: true },
-  { name: 'About', href: '#about', isHash: true },
-  { name: 'Contact', href: '#contact', isHash: true },
-]
+import { Menu, X, FileText } from 'lucide-react'
+import { navLinks } from '@/lib/data'
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const pathname = usePathname()
+  const [activeSection, setActiveSection] = useState('hero')
 
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 50)
-    window.addEventListener('scroll', handleScroll)
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50)
+
+      // Detect active section
+      const sections = navLinks.map((l) => l.href.replace('#', ''))
+      for (let i = sections.length - 1; i >= 0; i--) {
+        const el = document.getElementById(sections[i])
+        if (el) {
+          const rect = el.getBoundingClientRect()
+          if (rect.top <= 150) {
+            setActiveSection(sections[i])
+            break
+          }
+        }
+      }
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  const handleHashClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string, isHash: boolean) => {
-    if (isHash) {
+  const handleHashClick = useCallback(
+    (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
       e.preventDefault()
       const id = href.replace('#', '')
       const el = document.getElementById(id)
@@ -34,62 +41,97 @@ export default function Navbar() {
         el.scrollIntoView({ behavior: 'smooth' })
         setMobileMenuOpen(false)
       }
-    } else {
-      setMobileMenuOpen(false)
-    }
-  }
+    },
+    []
+  )
 
   return (
     <nav
       className={`fixed top-0 left-0 w-full z-[100] transition-all duration-500 ${
         isScrolled
-          ? 'bg-background/80 backdrop-blur-lg py-4 shadow-lg'
-          : 'bg-transparent py-7'
+          ? 'bg-background/80 backdrop-blur-xl shadow-[0_1px_0_rgba(255,255,255,0.05)] py-3'
+          : 'bg-transparent py-5'
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 md:px-8 flex items-center justify-between">
-        {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 group">
-          <div className="w-10 h-10 bg-purple-primary rounded-lg flex items-center justify-center group-hover:shadow-[0_0_20px_rgba(124,58,237,0.5)] transition-all">
-            <Zap className="text-white fill-white" size={24} />
+        {/* Logo - Personal Brand */}
+        <a
+          href="#hero"
+          onClick={(e) => handleHashClick(e, '#hero')}
+          className="flex items-center gap-3 group"
+        >
+          <div className="relative w-9 h-9">
+            <div className="absolute inset-0 bg-gradient-to-br from-purple-primary to-blue-accent rounded-lg blur-[2px] opacity-80 group-hover:opacity-100 transition-opacity" />
+            <div className="relative w-full h-full bg-background rounded-lg flex items-center justify-center border border-white/10">
+              <span className="text-sm font-bold text-white font-display">DD</span>
+            </div>
           </div>
-          <div className="flex flex-col">
-            <span className="text-xl font-bold tracking-tight text-white uppercase leading-[0.8] font-display">Drexa</span>
-            <span className="text-[10px] text-purple-light font-medium uppercase tracking-[0.2em] leading-normal pt-1">Digital</span>
+          <div className="flex flex-col leading-none">
+            <span className="text-lg font-bold tracking-tight text-white font-display uppercase">
+              Drexa
+            </span>
+            <span className="text-[10px] text-purple-light font-medium uppercase tracking-[0.2em] leading-normal">
+              Digital
+            </span>
           </div>
-        </Link>
+        </a>
 
         {/* Desktop Nav */}
-        <div className="hidden md:flex items-center gap-8">
-          {navLinks.map((link) => (
-            <a
-              key={link.name}
-              href={link.href}
-              onClick={(e) => handleHashClick(e, link.href, link.isHash)}
-              className="relative text-sm font-medium text-text-secondary hover:text-purple-primary transition-colors py-2 group cursor-pointer"
-            >
-              {link.name}
-              <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-purple-primary rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
-            </a>
-          ))}
+        <div className="hidden md:flex items-center gap-1">
+          {navLinks.map((link) => {
+            const section = link.href.replace('#', '')
+            const isActive = activeSection === section
+            return (
+              <a
+                key={link.name}
+                href={link.href}
+                onClick={(e) => handleHashClick(e, link.href)}
+                className={`relative px-4 py-2 text-sm font-medium rounded-lg transition-all ${
+                  isActive
+                    ? 'text-white bg-white/5'
+                    : 'text-text-secondary hover:text-white hover:bg-white/[0.02]'
+                }`}
+              >
+                {link.name}
+                {isActive && (
+                  <motion.div
+                    layoutId="nav-indicator"
+                    className="absolute bottom-0 left-3 right-3 h-0.5 bg-gradient-to-r from-purple-primary to-blue-accent rounded-full"
+                  />
+                )}
+              </a>
+            )
+          })}
         </div>
 
-        {/* CTA Button */}
-        <div className="hidden md:block">
-          <button className="relative group p-[1px] rounded-full overflow-hidden transition-all hover:scale-105 active:scale-95">
-            <div className="absolute inset-0 bg-gradient-to-r from-purple-primary to-blue-accent" />
-            <div className="relative px-6 py-2.5 rounded-full bg-background transition-all group-hover:bg-transparent">
-              <span className="relative text-sm font-semibold text-white">Let's Talk ↗</span>
+        {/* Resume / CTA */}
+        <div className="hidden md:flex items-center gap-3">
+          <a
+            href="/resume.pdf"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-text-secondary hover:text-white hover:bg-white/5 transition-all"
+          >
+            <FileText size={16} />
+            Resume
+          </a>
+          <a
+            href="#contact"
+            onClick={(e) => handleHashClick(e, '#contact')}
+            className="relative group p-[1px] rounded-full overflow-hidden"
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-purple-primary to-blue-accent opacity-80 group-hover:opacity-100 transition-opacity" />
+            <div className="relative px-5 py-2 rounded-full bg-background transition-all group-hover:bg-transparent">
+              <span className="relative text-sm font-semibold text-white">Let's Talk</span>
             </div>
-          </button>
+          </a>
         </div>
 
         {/* Mobile Toggle */}
         <button
-          className="md:hidden text-white p-2"
+          className="md:hidden text-white p-2 hover:bg-white/5 rounded-lg transition-colors"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          aria-label="Toggle mobile menu"
         >
-          {mobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
+          {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
 
@@ -97,25 +139,38 @@ export default function Navbar() {
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-surface overflow-hidden"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            className="md:hidden mt-2 mx-6 rounded-2xl bg-surface border border-border overflow-hidden"
           >
-            <div className="flex flex-col p-6 gap-4">
+            <div className="flex flex-col p-4 gap-1">
               {navLinks.map((link) => (
                 <a
                   key={link.name}
                   href={link.href}
-                  className="text-lg font-medium text-text-secondary hover:text-purple-primary transition-colors"
-                  onClick={(e) => handleHashClick(e, link.href, link.isHash)}
+                  onClick={(e) => handleHashClick(e, link.href)}
+                  className="px-4 py-3 rounded-xl text-base font-medium text-text-secondary hover:text-white hover:bg-white/5 transition-all"
                 >
                   {link.name}
                 </a>
               ))}
-              <button className="w-full mt-4 py-4 rounded-xl gradient-hero text-white font-bold">
-                Let's Talk ↗
-              </button>
+              <hr className="my-2 border-border" />
+              <a
+                href="/resume.pdf"
+                className="px-4 py-3 rounded-xl text-base font-medium text-text-secondary hover:text-white hover:bg-white/5 transition-all flex items-center gap-2"
+              >
+                <FileText size={18} />
+                Resume
+              </a>
+              <a
+                href="#contact"
+                onClick={(e) => handleHashClick(e, '#contact')}
+                className="mt-2 py-3.5 rounded-xl bg-gradient-to-r from-purple-primary to-blue-accent text-white font-bold text-center"
+              >
+                Let's Talk →
+              </a>
             </div>
           </motion.div>
         )}

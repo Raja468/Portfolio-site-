@@ -11,6 +11,7 @@ const config: Config = {
       fontFamily: {
         sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
         display: ['Space Grotesk', 'sans-serif'],
+        mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
       },
       colors: {
         background: '#08080f',
@@ -29,11 +30,13 @@ const config: Config = {
         'text-muted': '#6b6b8a',
       },
       animation: {
-        'float': 'float 6s ease-in-out infinite',
+        float: 'float 6s ease-in-out infinite',
         'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
         'spin-slow': 'spin 20s linear infinite',
         'gradient-shift': 'gradientShift 8s ease infinite',
-        'scanline': 'scanline 4s linear infinite',
+        'grid-scroll': 'gridScroll 20s linear infinite',
+        'text-reveal': 'textReveal 1.5s ease forwards',
+        'glow-pulse': 'glowPulse 3s ease-in-out infinite',
       },
       keyframes: {
         float: {
@@ -44,9 +47,17 @@ const config: Config = {
           '0%, 100%': { backgroundPosition: '0% 50%' },
           '50%': { backgroundPosition: '100% 50%' },
         },
-        scanline: {
-          '0%': { top: '-100%' },
-          '100%': { top: '100%' },
+        gridScroll: {
+          '0%': { transform: 'translateY(0)' },
+          '100%': { transform: 'translateY(-50%)' },
+        },
+        textReveal: {
+          '0%': { opacity: '0', transform: 'translateY(20px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        glowPulse: {
+          '0%, 100%': { opacity: '0.4' },
+          '50%': { opacity: '1' },
         },
       },
     },

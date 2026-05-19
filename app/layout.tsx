@@ -1,19 +1,19 @@
 import type { Metadata } from 'next'
 import './globals.css'
-
+import SmoothScroll from '@/components/SmoothScroll'
 
 export const viewport = {
   themeColor: '#08080f',
 }
 
 export const metadata: Metadata = {
-  title: 'Drexa Digital — Next-Gen Digital Agency',
+  title: 'Ahmed Bilal — Full-Stack Developer | Drexa Digital',
   description:
-    'We combine creativity, technology and strategy to help brands grow, engage and stand out in the digital world.',
-  keywords: 'digital agency, web development, UI/UX design, AI integration, SaaS development Pakistan',
+    'Full-stack developer crafting premium digital experiences with modern web technologies. Specializing in React, Next.js, and performance-first engineering.',
+  keywords: 'frontend developer, full-stack developer, React, Next.js, TypeScript, portfolio, web developer Pakistan, Drexa Digital',
   openGraph: {
-    title: 'Drexa Digital — Next-Gen Digital Agency',
-    description: 'We build modern digital experiences that feel alive.',
+    title: 'Ahmed Bilal — Full-Stack Developer | Drexa Digital',
+    description: 'Crafting premium digital experiences with modern web technologies.',
     type: 'website',
     locale: 'en_US',
   },
@@ -25,9 +25,13 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body className="bg-background text-text-primary font-sans overflow-x-hidden">
-        {children}
+    <html lang="en" className="scroll-smooth">
+      <body className="bg-background text-text-primary font-sans antialiased overflow-x-hidden">
+        <div className="noise-overlay">
+          <SmoothScroll ease={0.08} disableOnTouch={true}>
+            {children}
+          </SmoothScroll>
+        </div>
       </body>
     </html>
   )
