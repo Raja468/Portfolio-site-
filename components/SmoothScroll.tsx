@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useRef, type ReactNode } from 'react'
 
@@ -52,6 +52,7 @@ export default function SmoothScroll({
     enabledRef.current = true
 
     const setBodyHeight = () => {
+      if (!content || !spacer) return
       const height = content.getBoundingClientRect().height
       spacer.style.height = `${height}px`
     }
@@ -61,6 +62,7 @@ export default function SmoothScroll({
     }
 
     const raf = () => {
+      if (!content) return
       updateTarget()
 
       const current = currentRef.current
@@ -82,7 +84,7 @@ export default function SmoothScroll({
 
     // Keep height updated on resize / content changes
     const resizeObserver = new ResizeObserver(setBodyHeight)
-    resizeObserver.observe(content)
+    if (content) resizeObserver.observe(content!)
 
     window.addEventListener('resize', setBodyHeight, { passive: true })
     window.addEventListener('load', setBodyHeight)
@@ -93,8 +95,8 @@ export default function SmoothScroll({
       resizeObserver.disconnect()
       window.removeEventListener('resize', setBodyHeight)
       window.removeEventListener('load', setBodyHeight)
-      content.style.transform = ''
-      spacer.style.height = '0px'
+      if (content) content.style.transform = ''
+      if (spacer) spacer.style.height = '0px'
     }
   }, [ease, disableOnTouch])
 
